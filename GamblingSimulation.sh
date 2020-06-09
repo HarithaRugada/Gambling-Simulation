@@ -4,11 +4,15 @@ echo "WELCOME TO GAMBLING SIMULATION"
 
 STAKE_PER_DAY=100
 BET_PER_GAME=1
-
+gain=0
+totalProfit=0
+declare -A gambling
+declare -A sum
 read -p "enter the percent at which the gambler can resign for the day " percent
 
-Max_Stake=$(( $STAKE_PER_DAY +($percent*$STAKE_PER_DAY/100) ))
-Min_Stake=$(( $STAKE_PER_DAY -($percent*$STAKE_PER_DAY/100) ))
+stakePercentage=$(( $percent*$STAKE_PER_DAY/100 ))
+Max_Stake=$(( $STAKE_PER_DAY +$stakePercentage ))
+Min_Stake=$(( $STAKE_PER_DAY -$stakePercentage ))
 
 function dailyPlay()
 {
@@ -28,27 +32,28 @@ function dailyPlay()
                 fi
 
 	done
+	gain=$(($cash-100))
+	echo $gain
 }
 
-function monthPlay()
+
+function winLossDays()
 {
-	win=0
-	lose=0
-
-	for (( i=1;i<=20;i++ ))
+	day=1
+	while [ $day -le 20 ]
 	do
-		dailyPlay
-
-		if [ $cash -gt $STAKE_PER_DAY ]
-		then
-			win=$(( $win+$percent ))
-		else
-			lose=$(( $lose+$percent ))
-		fi
+		dayProfit=0
+		dayProfit=$(dailyPlay)
+		gambling[$day]=$dayProfit
+		day=$(( $day+1 ))
+		totalProfit=$(( $totalProfit+$dayProfit ))
+		sum[$day]=$totalProfit
 	done
 
-	echo "Total cash won > "$win
-	echo "Total cash lost > "$lose
+	echo "Total Profit : "$totalProfit
+	for element in ${!gambling[*]}
+	do
+		echo $element" : "${gambling[$element]}
+	done | sort -n
 }
-
-monthPlay
+winLossDays
