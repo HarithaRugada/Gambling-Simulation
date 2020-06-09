@@ -6,6 +6,7 @@ STAKE_PER_DAY=100
 BET_PER_GAME=1
 gain=0
 totalProfit=0
+stopGambling="false"
 declare -A gambling
 declare -A sum
 read -p "enter the percent at which the gambler can resign for the day " percent
@@ -69,4 +70,25 @@ function luckyAndUnluckyDay()
 	done | sort -n | head -1
 }
 
-luckyAndUnluckyDay
+function stopGamblingOrNot()
+{
+	winLossDays
+	while [ $stopGambling == "false" ]
+	do
+		if [ $totalProfit -gt 0 ]
+		then
+			profit=$(winLossDays)
+			echo $profit
+			stopGamblingOrNot
+		fi
+
+		if [ $totalProfit -le 0 ]
+		then
+			stopGambling="true"
+			echo "No profit, so stop gambling"
+			break
+		fi
+	done
+}
+
+stopGamblingOrNot
