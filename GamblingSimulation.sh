@@ -40,7 +40,7 @@ function dailyPlay()
 function winLossDays()
 {
 	day=1
-	while [ $day -le 20 ]
+	while [ $day -lt 20 ]
 	do
 		dayProfit=0
 		dayProfit=$(dailyPlay)
@@ -51,9 +51,22 @@ function winLossDays()
 	done
 
 	echo "Total Profit : "$totalProfit
-	for element in ${!gambling[*]}
-	do
-		echo $element" : "${gambling[$element]}
-	done | sort -n
 }
-winLossDays
+
+function luckyAndUnluckyDay()
+{
+	winLossDays
+	echo "For Luckiest Day"
+	for element in ${!sum[*]}
+	do
+		echo $element " : " ${sum[$element]}
+	done | sort -n | tail -1
+
+	echo "For Unluckiest Day"
+	for element in ${!sum[*]}
+	do
+		echo $element " : " ${sum[$element]}
+	done | sort -n | head -1
+}
+
+luckyAndUnluckyDay
