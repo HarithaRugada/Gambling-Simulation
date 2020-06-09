@@ -14,19 +14,41 @@ function dailyPlay()
 {
 	cash=$STAKE_PER_DAY
 
-	while [ $cash -gt $Min_Stake ] && [ $cash -lt $Max_Stake ]
-	do
-		winOrLose=$((RANDOM%2))
-		if [ $winOrLose -eq 1 ]
-		then
-			cash=$(( $cash+$BET_PER_GAME ))
-			echo "Cash is " $cash
-		else
-			cash=$(( $cash-$BET_PER_GAME ))
-			echo "Cash is " $cash
-		fi
+        while [ $cash -gt $Min_Stake ] && [ $cash -lt $Max_Stake ]
+        do
+        	winOrLose=$((RANDOM%2))
+
+       	        if [ $winOrLose -eq 1 ]
+          	then
+                	cash=$(( $cash+$BET_PER_GAME ))
+                        #echo "Cash is " $cash
+                else
+                        cash=$(( $cash-$BET_PER_GAME ))
+                        #echo "Cash is " $cash
+                fi
+
 	done
-	echo "Final Cash is " $cash
 }
 
-dailyPlay
+function monthPlay()
+{
+	win=0
+	lose=0
+
+	for (( i=1;i<=20;i++ ))
+	do
+		dailyPlay
+
+		if [ $cash -gt $STAKE_PER_DAY ]
+		then
+			win=$(( $win+$percent ))
+		else
+			lose=$(( $lose+$percent ))
+		fi
+	done
+
+	echo "Total cash won > "$win
+	echo "Total cash lost > "$lose
+}
+
+monthPlay
