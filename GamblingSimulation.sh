@@ -1,8 +1,8 @@
-#! /bin/bash/ -x
+#!/bin/bash
 
 echo "WELCOME TO GAMBLING SIMULATION"
 
-STAKE_PER_DAY=10
+STAKE_PER_DAY=100
 BET_PER_GAME=1
 
 declare -A gambling
@@ -12,18 +12,17 @@ read -p "enter the percent at which the gambler can resign for the day " percent
 read -p "enter the number of days " days
 
 stakePercentage=$(( $percent*$STAKE_PER_DAY/100 ))
-Max_Stake=$(( $STAKE_PER_DAY +$stakePercentage ))
-Min_Stake=$(( $STAKE_PER_DAY -$stakePercentage ))
+maxStake=$(( $STAKE_PER_DAY +$stakePercentage ))
+minStake=$(( $STAKE_PER_DAY -$stakePercentage ))
 
 function dailyPlay()
 {
 	cash=$STAKE_PER_DAY
-	gain=0
-        while [ $cash -gt $Min_Stake ] && [ $cash -lt $Max_Stake ]
+        while [ $cash -gt $minStake ] && [ $cash -lt $maxStake ]
         do
         	winOrLose=$((RANDOM%2))
 
-       	        if [ $winOrLose -eq 1 ]
+       	        if [ $winOrLose -eq $BET_PER_GAME ]
           	then
                 	cash=$(( $cash+$BET_PER_GAME ))
                 else
@@ -31,8 +30,8 @@ function dailyPlay()
                 fi
 
 	done
-	gain=$(($cash-$STAKE_PER_DAY))
-	echo $gain
+	cash=$(( $cash-$STAKE_PER_DAY ))
+	echo $cash
 }
 
 
@@ -40,23 +39,23 @@ function winLossDays()
 {
 	day=1
 	totalProfit=0
-	while [ $day -lt $days ]
+	while [ $day -le $days ]
 	do
-		dayProfit=0
+		local dayProfit=0
 		dayProfit=$(dailyPlay)
 		gambling[$day]=$dayProfit
-		day=$(( $day+1 ))
 		totalProfit=$(( $totalProfit+$dayProfit ))
 		sum[$day]=$totalProfit
+		day=$(( $day+1 ))
 	done
+	echo $totalProfit
 
-	echo "Total Profit : "$totalProfit
 }
 
 function luckyAndUnluckyDay()
 {
 	winLossDays
-	echo "For Luckiest Day"
+	#echo "For Luckiest Day"
 	for element in ${!sum[*]}
 	do
 		echo $element " : " ${sum[$element]}
@@ -78,10 +77,12 @@ function stopGamblingOrNot()
 		if [ $totalProfit -gt 0 ]
 		then
 			echo "Can play more games"
+			break
 		else
 			stopGambling="true"
 			echo "No profit, so stop gambling"
 		fi
 	done
 }
+luckyAndUnluckyDay
 stopGamblingOrNot
