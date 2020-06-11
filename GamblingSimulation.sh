@@ -37,7 +37,7 @@ function dailyPlay()
 
 function winLossDays()
 {
-	day=1
+	local day=1
 	totalProfit=0
 	while [ $day -le $days ]
 	do
@@ -55,7 +55,7 @@ function winLossDays()
 function luckyAndUnluckyDay()
 {
 	winLossDays
-	#echo "For Luckiest Day"
+	echo "For Luckiest Day"
 	for element in ${!sum[*]}
 	do
 		echo $element " : " ${sum[$element]}
